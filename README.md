@@ -154,25 +154,6 @@ https://你的域名/health
 
 必须保持邀请注册，不开放公开注册；只在合法、授权、非公开、可控的实验环境中使用。不得将账号、邀请码、订阅地址、配置文件或访问凭据公开传播、销售、出租、转售、导流或用于任何违法违规目的。
 
-## 不要提交的文件
-
-开源或提交代码前，确认以下文件没有进入 Git：
-
-- `f-worker/wrangler.toml`
-- `f-worker/wrangler.live.toml`
-- `f-worker/wrangler.recovery.toml`
-- `f-worker/.dev.vars`
-- `.env`
-
-也不要提交：
-
-- Cloudflare API Token
-- Worker Secrets
-- Turnstile Secret Key
-- Telegram Bot Token
-- 真实域名、真实邮箱、D1 ID、KV ID
-- 任何可用于访问真实实例的账号、密钥或订阅链接
-
 ## 常用命令
 
 ```cmd
@@ -181,17 +162,6 @@ scripts\dev.cmd
 scripts\deploy.cmd
 scripts\check-sec12.cmd
 ```
-
-## 开源发布前检查
-
-- `LICENSE` 为 Apache License 2.0
-- README 明确项目仅用于源码学习、技术交流、学术研究和受控实验
-- README 没有承诺公共代理、商业 VPN、电信业务、网络接入、托管运营、规避监管或绕过访问控制等用途
-- 示例配置只使用空值或通用默认值
-- 真实部署配置、Token、Secret、域名和邮箱未提交
-- 不提交真实节点、真实订阅地址、真实访问凭据、真实用户数据、真实日志或可识别个人信息
-- 不在 README、Issue、Release、演示截图或宣传材料中展示可用入口、可用账号、可用订阅或可被理解为公开运营的内容
-- `scripts\build.cmd` 可以通过
 
 ## 许可证
 
