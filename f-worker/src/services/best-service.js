@@ -273,6 +273,7 @@ export async function verifyBestToken(env, token) {
 
 export async function isInlineEnabled(env) {
   const v = await readSetting(env, SETTING_INLINE);
+  if (v == null || v === '') return true;
   return v === '1' || v === 'true';
 }
 
