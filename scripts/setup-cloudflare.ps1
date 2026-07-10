@@ -372,6 +372,19 @@ function Invoke-CaptureCmd {
     [Parameter(Mandatory = $true)][string]$Command,
     [string]$WorkingDirectory = $root
   )
+  $result = Invoke-CaptureCmdResult -Command $Command -WorkingDirectory $WorkingDirectory
+  if ($result.ExitCode -ne 0) {
+    Write-Host $result.Text
+    exit $result.ExitCode
+  }
+  return $result.Text
+}
+
+function Invoke-CaptureCmdResult {
+  param(
+    [Parameter(Mandatory = $true)][string]$Command,
+    [string]$WorkingDirectory = $root
+  )
   $psi = [System.Diagnostics.ProcessStartInfo]::new()
   $psi.FileName = 'cmd.exe'
   $psi.Arguments = '/d /c ' + $Command
@@ -390,11 +403,27 @@ function Invoke-CaptureCmd {
   $p.WaitForExit()
 
   $text = (($stdout, $stderr) | Where-Object { $_ }) -join "`n"
-  if ($p.ExitCode -ne 0) {
-    Write-Host $text
-    exit $p.ExitCode
+  return [pscustomobject]@{
+    ExitCode = $p.ExitCode
+    Text     = $text
   }
-  return $text
+}
+
+function Test-WranglerSession {
+  $result = Invoke-CaptureCmdResult -Command "$(Get-WranglerCommand) whoami" -WorkingDirectory $root
+  if (![string]::IsNullOrWhiteSpace($result.Text)) {
+    Write-Host $result.Text
+  }
+  if ($result.ExitCode -ne 0) {
+    return $false
+  }
+  return ($result.Text -notmatch 'You are not authenticated|Please run `?wrangler login`?')
+}
+
+function Assert-WranglerSession {
+  if (!(Test-WranglerSession)) {
+    throw 'Wrangler 登录验证失败，请重新运行脚本并完成 Cloudflare 登录。'
+  }
 }
 
 function Get-WranglerAccountId {
@@ -772,15 +801,7 @@ Write-Host '3. 服务器环境可选择 API Token 登录，Token 需要 Workers�
 Write-Host ''
 
 Push-Location $root
-$hasSession = $false
-try {
-  Invoke-Wrangler whoami
-  if (!$LASTEXITCODE) {
-    $hasSession = $true
-  }
-} catch {
-  $hasSession = $false
-}
+$hasSession = Test-WranglerSession
 
 if ($hasSession) {
   $logoutChoice = Read-Choice '检测到 Wrangler 已登录，请选择处理方式' @(
@@ -816,7 +837,7 @@ if (!$hasSession) {
     Invoke-Step { Invoke-Wrangler login }
   }
 
-  Invoke-Step { Invoke-Wrangler whoami }
+  Assert-WranglerSession
 }
 Pop-Location
 

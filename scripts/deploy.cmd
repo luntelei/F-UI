@@ -5,6 +5,12 @@ cd /d "%ROOT%"
 call "%~dp0use-node.cmd"
 cd f-worker
 
+call npm install
+if errorlevel 1 (
+  set "RESULT=1"
+  goto done
+)
+
 findstr /R /B /C:"allow_insecure_dev = \"1\"" wrangler.toml >nul 2>&1
 if not errorlevel 1 (
   echo [ERROR] allow_insecure_dev is enabled in wrangler.toml. Disable before production deploy.
