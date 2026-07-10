@@ -851,6 +851,7 @@ $currentSiteKey = Get-VarValue $toml 'turnstile_site_key'
 $currentD1Name = Get-FirstBlockValue $toml 'd1_databases' 'database_name'
 $currentD1Id = Get-FirstBlockValue $toml 'd1_databases' 'database_id'
 $currentKvId = Get-FirstBlockValue $toml 'kv_namespaces' 'id'
+$currentKvName = Get-SetupValue 'kv_name'
 
 if (!$currentAccountId) { $currentAccountId = Get-SetupValue 'account_id' }
 if (!$currentDomain) { $currentDomain = Get-SetupValue 'domain' }
@@ -860,10 +861,12 @@ if (!$currentD1Id) { $currentD1Id = Get-SetupValue 'd1_id' }
 if (!$currentKvId) { $currentKvId = Get-SetupValue 'kv_id' }
 if (!$currentWorkerName) { $currentWorkerName = Get-SetupValue 'worker_name' }
 if (!$currentD1Name) { $currentD1Name = Get-SetupValue 'd1_name' }
+if (!$currentKvName) { $currentKvName = 'f-ui-kv' }
 
 $configComplete = (
   ![string]::IsNullOrWhiteSpace($currentWorkerName) -and
   ![string]::IsNullOrWhiteSpace($currentD1Name) -and
+  ![string]::IsNullOrWhiteSpace($currentKvName) -and
   ![string]::IsNullOrWhiteSpace($currentD1Id) -and
   ![string]::IsNullOrWhiteSpace($currentKvId) -and
   ![string]::IsNullOrWhiteSpace($currentDomain) -and
@@ -877,6 +880,7 @@ if ($configComplete -and !$Reconfigure) {
   $workerName = $currentWorkerName
   $d1Name = $currentD1Name
   $d1Id = $currentD1Id
+  $kvName = $currentKvName
   $kvId = $currentKvId
   $domain = Normalize-DomainName $currentDomain
   $adminEmail = $currentAdmin
@@ -907,7 +911,10 @@ $d1Name = Read-Text '请输入 D1 数据库名称' ($(if ($currentD1Name) { $cur
 if ([string]::IsNullOrWhiteSpace($d1Name)) { $d1Name = 'f-ui-db' }
 $d1Id = Resolve-CloudflareId 'd1' $d1Name $currentD1Id
 
-$kvName = 'f-ui-kv'
+Write-Host ''
+Write-Host 'KV 命名空间用于保存运行时配置，名称默认使用 f-ui-kv。' -ForegroundColor Cyan
+$kvName = Read-Text '请输入 KV 命名空间名称' ($(if ($currentKvName) { $currentKvName } else { 'f-ui-kv' }))
+if ([string]::IsNullOrWhiteSpace($kvName)) { $kvName = 'f-ui-kv' }
 $kvId = Resolve-CloudflareId 'kv' $kvName $currentKvId
 
 Write-Host ''
@@ -998,6 +1005,7 @@ Set-SetupValue 'account_id' $accountId
 Set-SetupValue 'worker_name' $workerName
 Set-SetupValue 'd1_name' $d1Name
 Set-SetupValue 'd1_id' $d1Id
+Set-SetupValue 'kv_name' $kvName
 Set-SetupValue 'kv_id' $kvId
 Set-SetupValue 'domain' $domain
 Set-SetupValue 'admin' $adminEmail
