@@ -1,0 +1,2 @@
+# 本地 wrangler dev 用（复制为 vpn-worker/.dev.vars，勿提交）
+jwt_secret=

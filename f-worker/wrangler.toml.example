@@ -1,0 +1,36 @@
+name = "f-ui"
+main = "src/index.js"
+compatibility_date = "2024-12-01"
+workers_dev = true
+
+[assets]
+binding = "ASSETS"
+directory = "./dist"
+not_found_handling = "single-page-application"
+run_worker_first = true
+
+[[kv_namespaces]]
+binding = "F_UI_KV"
+id = ""
+
+[[d1_databases]]
+binding = "F_UI_DB"
+database_name = "f-ui-db"
+database_id = ""
+migrations_dir = "migrations"
+
+[vars]
+admin = ""
+domain = ""
+invite_policy = "super_admin_only"
+turnstile_site_key = ""
+off_log = "0"
+debug = "0"
+proxy_enabled = "1"
+WORKER_NAME = "f-ui"
+
+[triggers]
+crons = ["0 3 * * *"]
+
+[build]
+command = "npm --prefix ../f-vue install && npm --prefix ../f-vue run build"

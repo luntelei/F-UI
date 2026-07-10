@@ -1,0 +1,22 @@
+{
+  "name": "f-ui-worker",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.7.4"
+  },
+  "devDependencies": {
+    "wrangler": "^3.114.0"
+  }
+}

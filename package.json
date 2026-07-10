@@ -1,0 +1,11 @@
+{
+  "name": "f-ui",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "private": false,
+  "scripts": {
+    "build:vue": "npm run build --prefix f-vue",
+    "dev": "npm run dev --prefix f-worker",
+    "deploy": "npm run deploy --prefix f-worker"
+  }
+}

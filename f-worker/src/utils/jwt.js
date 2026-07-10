@@ -1,0 +1,65 @@
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
+function base64url(input) {
+  const str = btoa(String.fromCharCode(...new Uint8Array(input)));
+  return str.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+
+function base64urlDecode(str) {
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  return Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
+}
+
+export async function signJwt(env, payload, expiresInSeconds = 60 * 60 * 24 * 30) {
+  const header = { alg: 'HS256', typ: 'JWT' };
+  const now = Math.floor(Date.now() / 1000);
+  const fullPayload = { ...payload, iat: now, exp: now + expiresInSeconds };
+  const headerStr = base64url(encoder.encode(JSON.stringify(header)));
+  const payloadStr = base64url(encoder.encode(JSON.stringify(fullPayload)));
+  const data = `${headerStr}.${payloadStr}`;
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(env.jwt_secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+  return `${data}.${base64url(signature)}`;
+}
+
+export async function verifyJwt(env, token) {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const [headerB64, payloadB64, signatureB64] = parts;
+    const data = `${headerB64}.${payloadB64}`;
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(env.jwt_secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify'],
+    );
+    const valid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      base64urlDecode(signatureB64),
+      encoder.encode(data),
+    );
+    if (!valid) return null;
+    const payload = JSON.parse(decoder.decode(base64urlDecode(payloadB64)));
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+export function extractBearer(headerValue) {
+  if (!headerValue) return null;
+  if (headerValue.startsWith('Bearer ')) return headerValue.slice(7);
+  return headerValue;
+}

@@ -1,0 +1,146 @@
+:root {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  color: #1f2937;
+  background: #f3f4f6;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.el-card,
+.el-alert,
+.el-form,
+.el-descriptions,
+.el-table,
+.el-input,
+.el-textarea,
+.el-select,
+.el-input-number {
+  max-width: 100%;
+}
+
+.el-card {
+  overflow: hidden;
+}
+
+.el-card__header,
+.el-card__body {
+  min-width: 0;
+}
+
+.el-table {
+  width: 100%;
+}
+
+.el-table__body-wrapper,
+.el-table__header-wrapper,
+.el-table__footer-wrapper {
+  overflow-x: auto;
+}
+
+.el-message-box {
+  max-width: calc(100vw - 24px);
+}
+
+.el-overlay-dialog {
+  padding: 12px;
+}
+
+@media (max-width: 640px) {
+  .el-card__header {
+    padding: 14px 14px;
+  }
+
+  .el-card__body {
+    padding: 14px;
+  }
+
+  .el-dialog {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px);
+    margin: 12px auto !important;
+  }
+
+  .el-dialog__body {
+    padding: 14px 16px;
+    max-height: calc(100vh - 170px);
+    overflow: auto;
+  }
+
+  .el-dialog__footer {
+    padding: 10px 16px 16px;
+  }
+
+  .el-dialog__footer .el-button + .el-button,
+  .el-message-box__btns .el-button + .el-button {
+    margin-left: 0;
+  }
+
+  .el-dialog__footer .dialog-footer,
+  .el-dialog__footer,
+  .el-message-box__btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .el-button {
+    min-height: 36px;
+  }
+
+  .el-input-number {
+    width: 100%;
+  }
+
+  .el-descriptions__label,
+  .el-descriptions__content {
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 480px) {
+  .el-button {
+    white-space: normal;
+  }
+
+  .el-card {
+    border-radius: 8px;
+  }
+}
